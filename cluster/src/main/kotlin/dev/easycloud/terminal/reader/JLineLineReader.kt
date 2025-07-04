@@ -10,7 +10,7 @@ class JLineLineReader(val lineReader: LineReader, val prompt: String = logger.co
     fun start() {
         Thread {
             while (true) {
-                val line = this.lineReader.readLine(this.prompt);
+                val line = this.lineReader.readLine(this.prompt)
                 if (line.isNotBlank()) {
                     commandService.run(line)
                 }
