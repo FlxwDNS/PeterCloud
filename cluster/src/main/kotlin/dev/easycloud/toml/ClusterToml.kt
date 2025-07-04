@@ -4,7 +4,7 @@ import com.akuleshov7.ktoml.annotations.TomlComments
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
-val charPool : List<Char> = ('a'..'z') + ('A'..'Z') + ('0'..'9')
+//val charPool : List<Char> = ('a'..'z') + ('A'..'Z') + ('0'..'9')
 
 @Serializable
 data class ClusterToml(
