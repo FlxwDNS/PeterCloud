@@ -7,6 +7,7 @@ import java.nio.file.Path
 import java.nio.file.Paths
 import java.nio.file.StandardCopyOption
 import java.util.Locale
+import java.util.jar.JarFile
 import kotlin.io.path.*
 import kotlin.system.exitProcess
 
@@ -17,20 +18,16 @@ class Bootstrap {
         val dependenciesPath = Paths.get("dependencies")
         val librariesPath = dependenciesPath.resolve("libraries")
 
+        val bootstrapFile = JarFile(Bootstrap::class.java.protectionDomain.codeSource.location.toURI().toPath().toFile())
+
         localPath.takeIf { !it.exists() }?.createDirectory()
         dependenciesPath.takeIf { !it.exists() }?.createDirectory()
         librariesPath.takeIf { !it.exists() }?.createDirectory()
 
-        // Remove old dynamic directory if it exists
+        // remove old dynamic directory if it exists
         localPath.resolve("dynamic").deleteRecursively()
 
-        // Check if the loader-patcher.jar file exists
-        if (Files.exists(Paths.get("loader-patcher.jar"))) {
-            println("Patching could have been failed.")
-            Files.delete(Paths.get("loader-patcher.jar"))
-        }
-
-        // Load the EasyCloudCluster
+        // extract files from bootstrap
         mapOf(
             Pair("grpc", librariesPath.resolve("grpc")),
             Pair("cluster", librariesPath.resolve("cluster")),
@@ -39,6 +36,10 @@ class Bootstrap {
         }
 
         DependencyLoader().load(dependenciesPath)
+
+        // set version
+        val version = bootstrapFile.manifest.mainAttributes.getValue("project-version")
+        System.setProperty("version", version ?: "unknown")
     }
 
     fun run() {
@@ -48,7 +49,7 @@ class Bootstrap {
                 if (!System.getProperty("os.name").lowercase(Locale.getDefault()).contains("win")) {
                     fileArg = fileArg.replace(";", ":")
                 }
-                val process = ProcessBuilder("java","-cp", fileArg, "dev.easycloud.ClusterBootKt")
+                val process = ProcessBuilder("java","-cp", fileArg, "-Dfile.encoding=UTF-8", "-Dversion=${System.getProperty("version")}", "dev.easycloud.ClusterBootKt")
                     .redirectOutput(ProcessBuilder.Redirect.INHERIT)
                     .redirectError(ProcessBuilder.Redirect.INHERIT)
                     .redirectInput(ProcessBuilder.Redirect.INHERIT)

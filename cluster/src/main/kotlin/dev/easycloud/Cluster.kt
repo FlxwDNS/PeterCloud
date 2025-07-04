@@ -2,7 +2,6 @@ package dev.easycloud
 
 import com.akuleshov7.ktoml.file.TomlFileWriter
 import dev.easycloud.terminal.JLineTerminal
-import dev.easycloud.terminal.command.CommandService
 import dev.easycloud.terminal.logger.ClusterLogger
 import dev.easycloud.toml.ClusterToml
 import kotlinx.serialization.serializer
@@ -15,7 +14,7 @@ val logger = ClusterLogger()
 class Cluster {
     val clusterToml: Path = Paths.get("cluster.toml")
 
-    lateinit var terminal: JLineTerminal;
+    lateinit var terminal: JLineTerminal
 
     fun load() {
         logger.info("»")
