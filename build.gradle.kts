@@ -9,16 +9,11 @@ allprojects {
     version = "1.0-SNAPSHOT"
 
     repositories {
-      mavenCentral()
+        mavenCentral()
+        maven(url = "https://oss.sonatype.org/content/repositories/snapshots/")
     }
 
     dependencies {
-        // logging:kotlin
-        "compileOnly"("io.github.oshai:kotlin-logging:7.0.7")
-        // logging:api
-        "compileOnly"("org.slf4j:slf4j-api:2.0.17")
-        // logging:provider
-        "compileOnly"("org.slf4j:slf4j-log4j12:2.0.17")
     }
 
     tasks.withType<JavaCompile>().configureEach {

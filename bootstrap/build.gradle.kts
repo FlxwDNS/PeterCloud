@@ -6,21 +6,18 @@ plugins {
 repositories {
     mavenCentral()
     maven(url = "https://s01.oss.sonatype.org/content/repositories/snapshots/")
+    maven(url = "https://oss.sonatype.org/content/repositories/snapshots/")
 }
 
 dependencies {
     implementation("dev.vankka:dependencydownload-runtime:1.3.1")
 
+    // jline
+    runtimeDownload("org.jline:jline:3.30.4")
+
     // toml
     runtimeDownload("com.akuleshov7:ktoml-core:0.7.0")
     runtimeDownload("com.akuleshov7:ktoml-file:0.7.0")
-
-    // logging:kotlin
-    runtimeDownload("io.github.oshai:kotlin-logging:7.0.7")
-    // logging:api
-    runtimeDownload("org.slf4j:slf4j-api:2.0.17")
-    // logging:provider
-    runtimeDownload("org.slf4j:slf4j-log4j12:2.0.17")
 }
 
 tasks.withType<Jar> {
@@ -37,6 +34,7 @@ tasks.withType<Jar> {
 
     manifest {
         attributes["Main-Class"] = "dev.easycloud.BootstrapBootKt"
+        attributes["project-version"] = version
     }
 
     archiveFileName.set("bootstrap.jar")
