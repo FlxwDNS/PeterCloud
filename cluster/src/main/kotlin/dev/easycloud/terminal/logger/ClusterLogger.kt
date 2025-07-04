@@ -1,5 +1,6 @@
 package dev.easycloud.terminal.logger
 
+@Suppress("unused")
 class ClusterLogger {
     fun info(message: String) {
         println(this.format("info", message))
