@@ -1,0 +1,16 @@
+syntax = "proto3";
+
+service GroupService {
+  // Sends a greeting
+  rpc SayHello (TestRequest) returns (TestReply) {}
+}
+
+// The request message containing the user's name.
+message TestRequest {
+  string name = 1;
+}
+
+// The response message containing the greetings
+message TestReply {
+  string message = 1;
+}
