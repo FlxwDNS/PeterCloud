@@ -3,18 +3,27 @@ package dev.easycloud.terminal.reader
 import dev.easycloud.logger
 import dev.easycloud.terminal.command.CommandService
 import org.jline.reader.LineReader
+import org.jline.reader.UserInterruptException
+import kotlin.system.exitProcess
 
 class JLineLineReader(val lineReader: LineReader, val prompt: String = logger.colorText("<gray>easycloud<white>@<gray>${System.getProperty("version")}<white>:<reset> ")) {
     val commandService = CommandService()
 
     fun start() {
-        Thread {
+        val thread = Thread {
             while (true) {
-                val line = this.lineReader.readLine(this.prompt)
+                val line = lineReader.readLine(prompt)
                 if (line.isNotBlank()) {
                     commandService.run(line)
                 }
             }
-        }.start()
+        }
+        thread.uncaughtExceptionHandler = Thread.UncaughtExceptionHandler { _, throwable ->
+            if(throwable !is UserInterruptException) {
+                throwable.printStackTrace()
+            }
+            exitProcess(-1)
+        }
+        thread.start()
     }
 }

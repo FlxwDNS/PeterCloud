@@ -6,7 +6,7 @@ allprojects {
     apply(plugin = "java-library")
 
     group = "dev.easycloud"
-    version = "1.0-SNAPSHOT"
+    version = "3.0-pre1"
 
     repositories {
         mavenCentral()

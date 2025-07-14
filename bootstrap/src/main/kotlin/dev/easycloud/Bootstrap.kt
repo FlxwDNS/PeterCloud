@@ -32,7 +32,7 @@ class Bootstrap {
             Pair("grpc", librariesPath.resolve("grpc")),
             Pair("cluster", librariesPath.resolve("cluster")),
         ).forEach {
-            this.copyFile("${it.key}.jar", Paths.get("${it.value}.jar"))
+            copyFile("${it.key}.jar", Paths.get("${it.value}.jar"))
         }
 
         DependencyLoader().load(dependenciesPath)
