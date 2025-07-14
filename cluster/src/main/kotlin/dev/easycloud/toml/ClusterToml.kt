@@ -4,15 +4,16 @@ import com.akuleshov7.ktoml.annotations.TomlComments
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
-//val charPool : List<Char> = ('a'..'z') + ('A'..'Z') + ('0'..'9')
-
 @Serializable
 data class ClusterToml(
     @TomlComments("You can modify this file to change the cluster settings.", "Use 'reload' command in console to apply changes.")
     val tomlVersion: String = "1.0.0",
 
     @TomlComments("Language used for messages in the cluster. Default is English (en_US).")
-    val locale: String = "en_US",
+    val locale: String = "en",
+
+    @TomlComments("Debug mode. If enabled, the cluster will log more information. This is useful for better support and debugging.")
+    val debug: Boolean = false,
 
     val network: NetworkToml = NetworkToml(),
     @SerialName("group")
@@ -44,7 +45,6 @@ data class ClusterToml(
 
 @Serializable
 data class NetworkToml(
-    val host: String = "127.0.0.1",
     val port: Int = 31415,
 )
 

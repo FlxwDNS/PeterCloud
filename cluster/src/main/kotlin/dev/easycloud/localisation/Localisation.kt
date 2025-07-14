@@ -5,15 +5,15 @@ import java.util.Locale
 import java.util.ResourceBundle
 
 class Localisation(cluster: Cluster) {
-    val resourceBundle = ResourceBundle.getBundle("i18n", Locale.of(cluster.clusterToml.locale))
+    val locale: Locale = Locale.of(cluster.clusterToml.locale)
+    val resourceBundle: ResourceBundle = ResourceBundle.getBundle("i18n", locale)
 
-
-    fun get(key: String, vararg args: Any): String {
+    fun get(key: String, vararg args: Any?): String {
         return try {
-            String.format(resourceBundle.getString(key), *args)
+            String.format(locale, resourceBundle.getString(key), *args)
         } catch (e: Exception) {
             // Fallback to the key itself if the key is not found
-            key
+            "localisation not found: '$key'"
         }
     }
 }

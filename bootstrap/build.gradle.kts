@@ -18,6 +18,12 @@ dependencies {
     // toml
     runtimeDownload("com.akuleshov7:ktoml-core:0.7.0")
     runtimeDownload("com.akuleshov7:ktoml-file:0.7.0")
+
+    // grpc
+    runtimeDownload("io.grpc:grpc-protobuf:1.73.0")
+    runtimeDownload("io.grpc:grpc-services:1.73.0")
+    runtimeDownload("io.grpc:grpc-netty:1.73.0")
+    runtimeDownload("io.grpc:grpc-kotlin-stub:1.4.3")
 }
 
 tasks.withType<Jar> {

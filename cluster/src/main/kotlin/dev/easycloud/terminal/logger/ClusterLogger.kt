@@ -7,41 +7,47 @@ import java.time.format.DateTimeFormatter
 @Suppress("unused")
 class ClusterLogger {
     fun info(message: String, vararg args: Any) {
-        println(format("info", message, args))
+        println(format("<white>INFO<reset>", message, *args))
     }
 
     fun warn(message: String, vararg args: Any) {
-        println(format("warn", message, args))
+        println(format("<yellow>WARN<reset>", message, *args))
     }
 
     fun error(message: String, vararg args: Any) {
-        println(format("error", message, args))
+        println(format("<red>ERROR<reset>", message, *args))
     }
 
     fun debug(message: String, vararg args: Any) {
-        println(format("debug", message, args))
+        if(System.getProperty("debug") != "true") return
+
+        println(format("<yellow>DEBUG<reset>", message, *args))
     }
 
     fun trace(message: String, vararg args: Any) {
-        println(format("trace", message, args))
+        println(format("TRACE", message, *args))
     }
 
-    fun colorText(message: String, vararg args: Any): String {
+    fun colorText(message: String): String {
         return Color.entries.fold(message) { it, color ->
             it.replace("<" + color.name.lowercase() + ">", color.ascii)
-        }.format(*args)
+        }
     }
 
     fun format(type: String, message: String, vararg args: Any): String {
-        val time = LocalDateTime.now().format(DateTimeFormatter.ofPattern("HH:mm:ss"))
-        return "[$time] ${type.uppercase()}: ${colorText(localisation?.get(message, args) ?: "localisation is null", *args)}"
+        val time = LocalDateTime.now().format(
+            System.getProperty("debug")?.let {
+                DateTimeFormatter.ofPattern("HH:mm:ss.SSS")
+            } ?: DateTimeFormatter.ofPattern("HH:mm:ss")
+        )
+        return colorText("[<white>$time<reset>] ${type}: ${localisation?.get(message, *args) ?: "localisation is null"}")
     }
 }
 
 enum class Color(val ascii: String) {
     RESET("\u001B[0m"),
     BLACK("\u001B[30m"),
-    RED("\u001B[31m"),
+    RED("\u001B[91m"),
     GREEN("\u001B[32m"),
     YELLOW("\u001B[33m"),
     BLUE("\u001B[94m"),

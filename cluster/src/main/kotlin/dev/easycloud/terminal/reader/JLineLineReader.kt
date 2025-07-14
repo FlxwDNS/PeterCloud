@@ -9,7 +9,7 @@ import kotlin.system.exitProcess
 class JLineLineReader(val lineReader: LineReader, val prompt: String = logger.colorText("<gray>easycloud<white>@<gray>${System.getProperty("version")}<white>:<reset> ")) {
     val commandService = CommandService()
 
-    fun start() {
+    fun start(): Thread {
         val thread = Thread {
             while (true) {
                 val line = lineReader.readLine(prompt)
@@ -22,8 +22,10 @@ class JLineLineReader(val lineReader: LineReader, val prompt: String = logger.co
             if(throwable !is UserInterruptException) {
                 throwable.printStackTrace()
             }
-            exitProcess(-1)
+            exitProcess(0)
         }
         thread.start()
+        logger.debug("debug.terminalReadingStarted")
+        return thread
     }
 }

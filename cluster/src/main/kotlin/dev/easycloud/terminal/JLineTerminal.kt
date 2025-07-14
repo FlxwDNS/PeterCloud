@@ -1,6 +1,6 @@
 package dev.easycloud.terminal
 
-import dev.easycloud.localisation
+import dev.easycloud.logger
 import dev.easycloud.terminal.reader.JLineLineReader
 import org.jline.reader.LineReader
 import org.jline.reader.impl.LineReaderImpl
@@ -34,12 +34,17 @@ class JLineTerminal {
         }
     }
 
+    private lateinit var readerThread: Thread
+
     fun run() {
-        JLineLineReader(reader).start()
+        logger.debug("debug.terminalReading")
+        readerThread = JLineLineReader(reader).start()
 
     }
 
     fun shutdown() {
+        logger.debug("debug.terminalShuttingDown")
+        readerThread.interrupt()
         terminal.close()
     }
 }

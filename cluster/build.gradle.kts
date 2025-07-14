@@ -6,6 +6,12 @@ plugins {
 dependencies {
     compileOnly(project(":grpc"))
 
+    // grpc
+    compileOnly("io.grpc:grpc-protobuf:1.73.0")
+    compileOnly("io.grpc:grpc-services:1.73.0")
+    compileOnly("io.grpc:grpc-netty:1.73.0")
+    compileOnly("io.grpc:grpc-kotlin-stub:1.4.3")
+
     // jline
     compileOnly("org.jline:jline:3.30.4")
 
