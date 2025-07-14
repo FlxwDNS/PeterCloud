@@ -13,9 +13,9 @@ abstract class Command(val name: String, val syntax: List<String> = emptyList())
             arguments[argType] = context[i]
         }
 
-        var syntax = this.syntaxes.filter { it.key.size == context.size }.map { it.value }.firstOrNull()
+        var syntax = syntaxes.filter { it.key.size == context.size }.map { it.value }.firstOrNull()
         if(syntax == null) {
-            syntax = this.syntaxes.get(emptyList())
+            syntax = syntaxes.get(emptyList())
             if(syntax == null) {
                 logger.error("Please provide an valid executor.")
                 return
