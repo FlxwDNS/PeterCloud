@@ -1,5 +1,7 @@
 package dev.easycloud.terminal.command
 
+import dev.easycloud.logger
+
 class CommandService {
     val commands: List<Command> = listOf(TestCommand())
 
@@ -11,6 +13,6 @@ class CommandService {
                 return
             }
         }
-        println("Command not found: $context")
+        logger.error("command.notFound", context)
     }
 }

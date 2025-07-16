@@ -1,6 +1,3 @@
 package dev.easycloud.terminal.command
 
-class ArgumentType {
-
-
-}
+class ArgumentType(val id: String, val type: Class<Any>)

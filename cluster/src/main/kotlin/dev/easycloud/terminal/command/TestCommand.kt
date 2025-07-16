@@ -7,8 +7,13 @@ class TestCommand: Command("test") {
             println("Test command executed successfully!")
         }
 
+        val valueArgument = ArgumentType("value", String.javaClass)
+        val enabledArgument = ArgumentType("enabled", Boolean.javaClass)
         addSyntax({ args ->
-            println("Test command with arguments: $args")
-        }, listOf(ArgumentType(), ArgumentType()))
+            val value = args[valueArgument]
+            val enabled = args[enabledArgument] as Boolean
+
+            println("Test command executed with value: $value and enabled: $enabled")
+        }, valueArgument, enabledArgument)
     }
 }
