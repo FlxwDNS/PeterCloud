@@ -1,11 +1,11 @@
 package dev.easycloud.toml
-
+/*
 import com.akuleshov7.ktoml.annotations.TomlComments
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class ClusterToml(
+data class ClusterYaml(
     @TomlComments("You can modify this file to change the cluster settings.", "Use 'reload' command in console to apply changes.")
     val tomlVersion: String = "1.0.0",
 
@@ -53,4 +53,4 @@ data class GroupToml(
     val platform: String,
     @TomlComments("Properties of an group. You can also add custom properties here for later use.")
     val properties: Map<String, String>,
-)
+)*/

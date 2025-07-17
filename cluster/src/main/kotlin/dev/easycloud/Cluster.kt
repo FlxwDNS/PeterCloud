@@ -1,14 +1,12 @@
 package dev.easycloud
 
-import com.akuleshov7.ktoml.Toml
-import com.akuleshov7.ktoml.TomlInputConfig
 import dev.easycloud.grpc.GrpcService
 import dev.easycloud.localisation.Localisation
 import dev.easycloud.terminal.JLineTerminal
 import dev.easycloud.terminal.logger.ClusterLogger
-import dev.easycloud.toml.ClusterToml
+import dev.easycloud.toml.ClusterYaml
 import kotlinx.serialization.decodeFromString
-import kotlinx.serialization.encodeToString
+import net.mamoe.yamlkt.Yaml
 import java.nio.file.Path
 import java.nio.file.Paths
 import kotlin.io.path.exists
@@ -20,25 +18,24 @@ val logger = ClusterLogger()
 var localisation: Localisation? = null
 
 class Cluster {
-    private val toml = Toml(
-        inputConfig = TomlInputConfig(
-            ignoreUnknownNames = true
-        )
-    )
-    private val tomlPath: Path = Paths.get("cluster.toml")
+    private val yamlPath: Path = Paths.get("cluster.yml")
 
-    lateinit var clusterToml: ClusterToml
+    lateinit var clusterYaml: ClusterYaml
     lateinit var terminal: JLineTerminal
     lateinit var grpcServer: GrpcService
 
     fun load() {
+        val yaml = Yaml{
 
-        // Writing default configuration to cluster.toml if it does not exist
-        if(!tomlPath.exists()) {
-            tomlPath.writeText(toml.encodeToString<ClusterToml>(ClusterToml()))
         }
-        clusterToml = toml.decodeFromString<ClusterToml>(tomlPath.readText())
-        if(clusterToml.debug) {
+        // Writing default configuration to cluster.toml if it does not exist
+        if(!yamlPath.exists()) {
+            yaml.encodeToString(ClusterYaml.serializer(), ClusterYaml()).let { yaml ->
+                yamlPath.writeText(yaml)
+            }
+        }
+        clusterYaml = yaml.decodeFromString(yamlPath.readText())
+        if(clusterYaml.debug) {
             System.setProperty("debug", "true")
         }
 
@@ -49,6 +46,7 @@ class Cluster {
         terminal = JLineTerminal()
         logger.debug("debug.terminalInitialized")
 
+
         grpcServer = GrpcService()
     }
 
@@ -58,11 +56,15 @@ class Cluster {
         terminal.run()
 
         logger.info("cluster.running")
+
+        // debug
+        Thread.currentThread().join()
     }
 
     fun shutdown() {
         println()
         logger.info("cluster.shuttingDown")
+
         // Perform any necessary cleanup here
         grpcServer.shutdown()
         terminal.shutdown()

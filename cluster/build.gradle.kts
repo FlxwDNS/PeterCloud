@@ -16,9 +16,13 @@ dependencies {
     compileOnly("org.jline:jline:3.30.4")
 
     // ktoml
-    compileOnly("com.akuleshov7:ktoml-core:0.7.0")
+    /*compileOnly("com.akuleshov7:ktoml-core:0.7.0")
     compileOnly("com.akuleshov7:ktoml-file:0.7.0")
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.9.0")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.9.0")*/
+
+    // yaml
+    //compileOnly("com.charleskorn.kaml:kaml:0.83.0")
+    compileOnly("net.mamoe.yamlkt:yamlkt:0.13.0")
 }
 
 tasks.withType<Jar> {

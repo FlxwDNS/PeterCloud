@@ -39,7 +39,6 @@ class JLineTerminal {
     fun run() {
         logger.debug("debug.terminalReading")
         readerThread = JLineLineReader(reader).start()
-
     }
 
     fun shutdown() {

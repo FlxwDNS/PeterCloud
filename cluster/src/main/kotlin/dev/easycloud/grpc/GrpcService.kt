@@ -9,12 +9,12 @@ class GrpcService {
     lateinit var server: Server
 
     fun run(cluster: Cluster) {
-        logger.debug("debug.grpcStarting", cluster.clusterToml.network.port)
+        logger.debug("debug.grpcStarting", cluster.clusterYaml.network.port)
 
-        server = ServerBuilder.forPort(cluster.clusterToml.network.port).build()
+        server = ServerBuilder.forPort(cluster.clusterYaml.network.port).build()
 
         server.start()
-        logger.info("grpc.running", cluster.clusterToml.network.port)
+        logger.info("grpc.running", cluster.clusterYaml.network.port)
     }
 
     fun shutdown() {

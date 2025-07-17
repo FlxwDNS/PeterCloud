@@ -1,5 +1,6 @@
+import java.security.MessageDigest
+
 plugins {
-    id("dev.vankka.dependencydownload.plugin") version ("1.3.1")
     kotlin("jvm")
 }
 
@@ -9,45 +10,82 @@ repositories {
     maven(url = "https://oss.sonatype.org/content/repositories/snapshots/")
 }
 
+val download = configurations.create("download")
 dependencies {
-    implementation("dev.vankka:dependencydownload-runtime:1.3.1")
-
     // jline
-    runtimeDownload("org.jline:jline:3.30.4")
+    download("org.jline:jline:3.30.4")
 
     // toml
-    runtimeDownload("com.akuleshov7:ktoml-core:0.7.0")
-    runtimeDownload("com.akuleshov7:ktoml-file:0.7.0")
+    //download("com.akuleshov7:ktoml-core:0.7.0")
+    //download("com.akuleshov7:ktoml-file:0.7.0")
+
+    // yaml
+    //download("com.charleskorn.kaml:kaml:0.83.0")
+    download("net.mamoe.yamlkt:yamlkt:0.13.0")
 
     // grpc
-    runtimeDownload("io.grpc:grpc-protobuf:1.73.0")
-    runtimeDownload("io.grpc:grpc-services:1.73.0")
-    runtimeDownload("io.grpc:grpc-netty:1.73.0")
-    runtimeDownload("io.grpc:grpc-kotlin-stub:1.4.3")
+    download("io.grpc:grpc-protobuf:1.73.0")
+    download("io.grpc:grpc-services:1.73.0")
+    download("io.grpc:grpc-netty:1.73.0")
+    download("io.grpc:grpc-kotlin-stub:1.4.3")
+}
+
+val outputFile = layout.buildDirectory.file("download-dependencies.txt")
+val exportDownloadDependencies = tasks.register("exportDownloadDependencies") {
+    group = "build"
+    description = "Exports the download dependencies to a file."
+
+    doLast {
+        val resolvedArtifacts = download.resolvedConfiguration.resolvedArtifacts
+        val output = outputFile.get().asFile
+        val mavenRepos = repositories.filterIsInstance<MavenArtifactRepository>()
+
+        output.printWriter().use { writer ->
+            download.resolve().forEach { file ->
+                val artifact = resolvedArtifacts.find { it.file.name == file.name }
+                if (artifact != null) {
+                    val group = artifact.moduleVersion.id.group
+                    val name = artifact.name
+                    val version = artifact.moduleVersion.id.version
+                    val sha256 = file.inputStream().use { stream ->
+                        val buffer = ByteArray(8192)
+                        val digest = MessageDigest.getInstance("SHA-256")
+                        var bytesRead: Int
+                        while (stream.read(buffer).also { bytesRead = it } != -1) {
+                            digest.update(buffer, 0, bytesRead)
+                        }
+                        digest.digest().joinToString("") { "%02x".format(it) }
+                    }
+
+                    val relativePath = "${group.replace('.', '/')}/$name/$version/$name-$version.jar"
+                    val url = mavenRepos.firstOrNull()?.url?.toString()?.trimEnd('/') + "/" + relativePath
+
+                    writer.println("$group:$name:$version:$sha256:${url.replace("https://", "")}")
+                }
+            }
+        }
+    }
 }
 
 tasks.withType<Jar> {
-    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
-    configurations["compileClasspath"].forEach { file: File ->
-        if(!file.name.startsWith("dependencydownload-") && !file.name.startsWith("kotlin-")) {
-            return@forEach
-        }
-        from(zipTree(file.absoluteFile))
+    dependsOn(exportDownloadDependencies)
+
+    from(outputFile) {
+        into("")
+        rename { "cloud.dependencies" }
     }
+
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
 
     from(project(":grpc").tasks.jar)
     from(project(":cluster").tasks.jar)
 
     manifest {
-        attributes["Main-Class"] = "dev.easycloud.BootstrapBootKt"
+        attributes["Main-Class"] = "dev.easycloud.BootstrapBoot"
         attributes["project-version"] = version
     }
 
     archiveFileName.set("bootstrap.jar")
-    dependsOn(
-        tasks.named("generateRuntimeDownloadResourceForRuntimeDownloadOnly"),
-        tasks.named("generateRuntimeDownloadResourceForRuntimeDownload")
-    )
 }
 
 tasks.register("runBootstrap") {

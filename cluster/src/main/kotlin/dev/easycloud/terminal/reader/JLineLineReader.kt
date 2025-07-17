@@ -10,7 +10,7 @@ class JLineLineReader(val lineReader: LineReader, val prompt: String = logger.co
     val commandService = CommandService()
 
     fun start(): Thread {
-        val thread = Thread {
+        val thread = Thread.startVirtualThread {
             while (true) {
                 val line = lineReader.readLine(prompt)
                 if (line.isNotBlank()) {
@@ -24,7 +24,6 @@ class JLineLineReader(val lineReader: LineReader, val prompt: String = logger.co
             }
             exitProcess(0)
         }
-        thread.start()
         logger.debug("debug.terminalReadingStarted")
         return thread
     }
