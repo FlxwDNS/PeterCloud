@@ -1,11 +1,11 @@
 package dev.easycloud.localisation
 
-import dev.easycloud.Cluster
+import dev.easycloud.configuration
 import java.util.Locale
 import java.util.ResourceBundle
 
-class Localisation(cluster: Cluster) {
-    val locale: Locale = Locale.of(cluster.clusterYaml.locale)
+class Localisation() {
+    val locale: Locale = Locale.of(configuration.locale)
     val resourceBundle: ResourceBundle = ResourceBundle.getBundle("i18n", locale)
 
     fun get(key: String, vararg args: Any?): String {

@@ -55,17 +55,15 @@ public final class Bootstrap {
             // Load dependencies from the dependencies directory
             new DependencyLoader().load(dependenciesPath);
 
+            System.out.print("\u001b[H\u001b[2J");
+            System.out.flush();
+
             // Retrieve the project version from the JAR manifest and set it as a system property
             String version = bootstrapFile.getManifest().getMainAttributes().getValue("project-version");
             if (version == null) {
                 version = "unknown";
             }
             System.setProperty("version", version);
-
-            if(version.contains("pre")) {
-                System.out.printf("[\u001B[97m%s\u001B[0m] \u001B[93mWARN\u001B[0m: This is an \u001B[93mpre-release \u001B[0mversion. \u001B[93mNot recommended \u001B[0mfor production.%n", LocalDateTime.now().format(DateTimeFormatter.ofPattern("HH:mm:ss")));
-            }
-
         } catch (Exception e) {
             throw new RuntimeException(e);
         }

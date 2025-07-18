@@ -1,31 +1,32 @@
 package dev.easycloud.terminal.logger
 
 import dev.easycloud.localisation
+import dev.easycloud.terminal.JLineTerminal
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 
 @Suppress("unused")
-class ClusterLogger {
+class ClusterLogger(val terminal: JLineTerminal) {
     fun info(message: String, vararg args: Any) {
-        println(format("<white>INFO<reset>", message, *args))
+        terminal.write(format("<white>INFO<reset>", message, *args))
     }
 
     fun warn(message: String, vararg args: Any) {
-        println(format("<yellow>WARN<reset>", message, *args))
+        terminal.write(format("<yellow>WARN<reset>", message, *args))
     }
 
     fun error(message: String, vararg args: Any) {
-        println(format("<red>ERROR<reset>", message, *args))
+        terminal.write(format("<red>ERROR<reset>", message, *args))
     }
 
     fun debug(message: String, vararg args: Any) {
         if(System.getProperty("debug") != "true") return
 
-        println(format("<yellow>DEBUG<reset>", message, *args))
+        terminal.write(format("<yellow>DEBUG<reset>", message, *args))
     }
 
     fun trace(message: String, vararg args: Any) {
-        println(format("TRACE", message, *args))
+        terminal.write(format("TRACE", message, *args))
     }
 
     fun colorText(message: String): String {

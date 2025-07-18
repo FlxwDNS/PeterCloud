@@ -86,31 +86,16 @@ tasks.withType<Jar> {
     }
 
     archiveFileName.set("bootstrap.jar")
-}
-
-tasks.register("runBootstrap") {
-    group = "build"
-    description = "Builds the jar and runs the bootstrap in a separate terminal."
-
-    dependsOn("jar")
 
     doLast {
         val jarTask = tasks.named("jar").get() as Jar
         val jarFile = jarTask.archiveFile.get().asFile
-        val outputDir = File("C:\\Users\\Radik\\Desktop\\EasyCloudV3")
+        val outputDir = File("/home/dog/Schreibtisch/EasyCloud/")
 
         copy {
             from(jarFile)
             from("start.bat")
             into(outputDir)
         }
-
-        val batPath = File(outputDir, "start.bat").absolutePath
-
-        ProcessBuilder("cmd", "/c", "start", "", "cmd", "/c", batPath)
-            .directory(outputDir)
-            .start()
-
-        println("Bootstrap launched. Check the terminal for output.")
     }
 }

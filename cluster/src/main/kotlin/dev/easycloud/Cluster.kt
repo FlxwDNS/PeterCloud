@@ -4,7 +4,7 @@ import dev.easycloud.grpc.GrpcService
 import dev.easycloud.localisation.Localisation
 import dev.easycloud.terminal.JLineTerminal
 import dev.easycloud.terminal.logger.ClusterLogger
-import dev.easycloud.toml.ClusterYaml
+import dev.easycloud.yaml.ClusterYaml
 import kotlinx.serialization.decodeFromString
 import net.mamoe.yamlkt.Yaml
 import java.nio.file.Path
@@ -14,14 +14,15 @@ import kotlin.io.path.readText
 import kotlin.io.path.writeText
 import kotlin.system.exitProcess
 
-val logger = ClusterLogger()
+val terminal = JLineTerminal()
+val logger = ClusterLogger(terminal)
+
 var localisation: Localisation? = null
+lateinit var configuration: ClusterYaml
 
 class Cluster {
     private val yamlPath: Path = Paths.get("cluster.yml")
 
-    lateinit var clusterYaml: ClusterYaml
-    lateinit var terminal: JLineTerminal
     lateinit var grpcServer: GrpcService
 
     fun load() {
@@ -34,25 +35,24 @@ class Cluster {
                 yamlPath.writeText(yaml)
             }
         }
-        clusterYaml = yaml.decodeFromString(yamlPath.readText())
-        if(clusterYaml.debug) {
+        configuration = yaml.decodeFromString(yamlPath.readText())
+        if(configuration.debug) {
             System.setProperty("debug", "true")
         }
 
-        localisation = Localisation(this)
+        localisation = Localisation()
+
+        if(System.getProperty("version").contains("pre")) {
+            logger.warn("cluster.preReleaseWarning")
+        }
 
         logger.info("cluster.loading")
-
-        terminal = JLineTerminal()
-        logger.debug("debug.terminalInitialized")
-
 
         grpcServer = GrpcService()
     }
 
     fun run() {
-        grpcServer.run(this)
-
+        grpcServer.run()
         terminal.run()
 
         logger.info("cluster.running")

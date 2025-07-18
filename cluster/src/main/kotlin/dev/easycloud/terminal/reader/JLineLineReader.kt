@@ -6,8 +6,11 @@ import org.jline.reader.LineReader
 import org.jline.reader.UserInterruptException
 import kotlin.system.exitProcess
 
-class JLineLineReader(val lineReader: LineReader, val prompt: String = logger.colorText("<gray>easycloud<white>@<gray>${System.getProperty("version")}<white>:<reset> ")) {
-    val commandService = CommandService()
+class JLineLineReader(
+    val lineReader: LineReader,
+    val commandService: CommandService,
+    val prompt: String = logger.colorText("<gray>easycloud<white>@<yellow>${System.getProperty("version")}<gray>:<reset> ")
+) {
 
     fun start(): Thread {
         val thread = Thread.startVirtualThread {
@@ -19,7 +22,7 @@ class JLineLineReader(val lineReader: LineReader, val prompt: String = logger.co
             }
         }
         thread.uncaughtExceptionHandler = Thread.UncaughtExceptionHandler { _, throwable ->
-            if(throwable !is UserInterruptException) {
+            if (throwable !is UserInterruptException) {
                 throwable.printStackTrace()
             }
             exitProcess(0)
